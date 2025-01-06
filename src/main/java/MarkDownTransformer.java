@@ -1,13 +1,16 @@
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class MarkDownTransformer {
 
-    public void execute(String inputFilePath, String outputFilePath) {
+    public void execute(String inputFilePath, String outputFilePath) throws FileNotFoundException {
+        File inputFile = new File(inputFilePath);
+
+        if (!inputFile.exists()) {
+            throw new FileNotFoundException();
+        }
+
         String inputFileContent = readFile(inputFilePath);
         String transformedContent = getTransformedContent(inputFileContent);
 
