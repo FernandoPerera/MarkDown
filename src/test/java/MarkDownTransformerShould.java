@@ -53,6 +53,16 @@ class MarkDownTransformerShould {
         );
     }
 
+    @Test
+    void not_transform_when_output_file_does_not_exist() {
+        String nonexistentOutputPath = "./nonexistentFile.md";
+
+        assertThrows(
+                FileNotFoundException.class,
+                () -> transformer.execute(inputFile.getAbsolutePath(), nonexistentOutputPath)
+        );
+    }
+
     private void writeInInputFile(String data) throws IOException {
         writer.write(data);
         writer.flush();
