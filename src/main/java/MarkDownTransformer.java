@@ -6,8 +6,13 @@ public final class MarkDownTransformer {
 
     public void execute(String inputFilePath, String outputFilePath) throws FileNotFoundException {
         File inputFile = new File(inputFilePath);
+        File outputFile = new File(outputFilePath);
 
         if (!inputFile.exists()) {
+            throw new FileNotFoundException();
+        }
+
+        if (!outputFile.exists()) {
             throw new FileNotFoundException();
         }
 
