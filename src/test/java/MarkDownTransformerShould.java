@@ -2,10 +2,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 class MarkDownTransformerShould {
@@ -44,6 +41,16 @@ class MarkDownTransformerShould {
 
         String content = readOutputFile();
         assertEquals(expectedContent, content);
+    }
+
+    @Test
+    void not_transform_when_input_file_does_not_exist() {
+        String nonexistentInputPath = "./nonexistentFile.md";
+
+        assertThrows(
+                FileNotFoundException.class,
+                () -> transformer.execute(nonexistentInputPath, outputFile.getAbsolutePath())
+        );
     }
 
     private void writeInInputFile(String data) throws IOException {
