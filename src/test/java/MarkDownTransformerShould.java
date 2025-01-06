@@ -64,6 +64,18 @@ class MarkDownTransformerShould {
         );
     }
 
+    @Test
+    void transform_content_with_some_other_text() throws IOException {
+        String inputContent = "[This book](https://bestbooks/thisbook) is interesting and amazing";
+        String expectedContent = "This book [^anchor1] is interesting and amazing\n[^anchor1]: https://bestbooks/thisbook";
+        writeInInputFile(inputContent);
+
+        transformer.execute(inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
+
+        String content = readOutputFile();
+        assertEquals(expectedContent, content);
+    }
+
     private void writeInInputFile(String data) throws IOException {
         writer.write(data);
         writer.flush();
