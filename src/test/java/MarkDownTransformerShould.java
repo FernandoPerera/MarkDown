@@ -35,7 +35,7 @@ class MarkDownTransformerShould {
     }
 
     @Test
-    void turn_links_into_footnotes_and_replace_anchors() throws IOException {
+    void transform_content_of_input_file_by_writing_to_output_file() throws IOException {
         String expectedContent = "This book [^anchor1]\n[^anchor1]: https://bestbooks/thisbook";
         String inputContent = "[This book](https://bestbooks/thisbook)";
         writeInInputFile(inputContent);
