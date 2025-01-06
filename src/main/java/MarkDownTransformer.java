@@ -4,32 +4,23 @@ import java.util.regex.Pattern;
 
 public final class MarkDownTransformer {
 
+    private final FileManager fileManager;
+
+    public MarkDownTransformer(FileManager fileManager) {
+        this.fileManager = fileManager;
+    }
+
     public void execute(String inputFilePath, String outputFilePath) throws FileNotFoundException {
         File inputFile = new File(inputFilePath);
         File outputFile = new File(outputFilePath);
 
-        verifyFileExistence(inputFile);
-        verifyFileExistence(outputFile);
+        fileManager.verifyExistence(inputFile);
+        fileManager.verifyExistence(outputFile);
 
-        String inputFileContent = readFile(inputFile);
+        String inputFileContent = fileManager.read(inputFile);
         String transformedContent = getTransformedContent(inputFileContent);
 
-        writeContentInFile(transformedContent, outputFile);
-    }
-
-    private void verifyFileExistence(File file) throws FileNotFoundException {
-        if (!file.exists()) {
-            throw new FileNotFoundException();
-        }
-    }
-
-    private void writeContentInFile(String contentToInput, File file) {
-        try (FileWriter writer = new FileWriter(file)) {
-            writer.write(contentToInput);
-            writer.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        fileManager.writeContent(transformedContent, outputFile);
     }
 
     private String getTransformedContent(String content) {
@@ -42,23 +33,6 @@ public final class MarkDownTransformer {
         String urlText = urlMatcher.group(1);
 
         return visibleText + " [^anchor1]\n[^anchor1]: " + urlText;
-    }
-
-    private String readFile(File file) {
-        String content = "";
-
-        try (FileReader reader = new FileReader(file)) {
-            StringBuilder stringBuilder = new StringBuilder();
-            int accumulator;
-            while ((accumulator = reader.read()) != -1) {
-                stringBuilder.append((char) accumulator);
-            }
-            content = stringBuilder.toString();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return content;
     }
 
 }

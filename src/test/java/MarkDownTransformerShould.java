@@ -12,7 +12,8 @@ class MarkDownTransformerShould {
     private FileReader reader;
     private FileWriter writer;
 
-    private final MarkDownTransformer transformer = new MarkDownTransformer();
+    private final FileManager fileManager = new FileManager();
+    private final MarkDownTransformer transformer = new MarkDownTransformer(fileManager);
 
     @BeforeEach
     void setUp() throws IOException {
