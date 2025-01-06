@@ -8,24 +8,23 @@ public final class MarkDownTransformer {
         File inputFile = new File(inputFilePath);
         File outputFile = new File(outputFilePath);
 
-        if (!inputFile.exists()) {
-            throw new FileNotFoundException();
-        }
+        verifyFileExistence(inputFile);
+        verifyFileExistence(outputFile);
 
-        if (!outputFile.exists()) {
-            throw new FileNotFoundException();
-        }
-
-        String inputFileContent = readFile(inputFilePath);
+        String inputFileContent = readFile(inputFile);
         String transformedContent = getTransformedContent(inputFileContent);
 
-        writeContentInFile(transformedContent, outputFilePath);
+        writeContentInFile(transformedContent, outputFile);
     }
 
-    private static void writeContentInFile(String contentToInput, String outputFilePath) {
-        File outputFile = new File(outputFilePath);
+    private void verifyFileExistence(File file) throws FileNotFoundException {
+        if (!file.exists()) {
+            throw new FileNotFoundException();
+        }
+    }
 
-        try (FileWriter writer = new FileWriter(outputFile)) {
+    private void writeContentInFile(String contentToInput, File file) {
+        try (FileWriter writer = new FileWriter(file)) {
             writer.write(contentToInput);
             writer.flush();
         } catch (IOException e) {
@@ -45,11 +44,10 @@ public final class MarkDownTransformer {
         return visibleText + " [^anchor1]\n[^anchor1]: " + urlText;
     }
 
-    private String readFile(String inputFilePath) {
-        File inputFile = new File(inputFilePath);
+    private String readFile(File file) {
         String content = "";
 
-        try (FileReader reader = new FileReader(inputFile)) {
+        try (FileReader reader = new FileReader(file)) {
             StringBuilder stringBuilder = new StringBuilder();
             int accumulator;
             while ((accumulator = reader.read()) != -1) {
