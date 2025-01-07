@@ -7,7 +7,7 @@ public final class MarkDownTransformer {
 
     private final FileManager fileManager;
 
-    private final static String LINKED_TEXT_REGEX = "\\[([^\\]]+)\\]\\(([^)]+)\\)";
+    private final static String LINKED_TEXT_REGEX = "\\[([^]]+)]\\(([^)]+)\\)";
 
     public MarkDownTransformer(FileManager fileManager) {
         this.fileManager = fileManager;
@@ -36,11 +36,13 @@ public final class MarkDownTransformer {
 
             String contentWithoutTransformation = content.substring(content.indexOf(url) + url.length() + 1);
             String replacedTextByAnchor = String.format("%s [^anchor%s]%s", linkedText, anchorNumber, contentWithoutTransformation);
+            String lineBreak = "\n";
 
             StringBuffer transformedContent = new StringBuffer()
-                    .append(content, 0, content.indexOf("[" + linkedText + "]"))
+                    .append(getInitialContent(content, linkedText))
                     .append(replacedTextByAnchor)
-                    .append(String.format("\n[^anchor%s]: %s", anchorNumber, url));
+                    .append(lineBreak)
+                    .append(buildFootnote(anchorNumber, url));
 
             Matcher linkedTextInRestMatcher = Pattern.compile(LINKED_TEXT_REGEX).matcher(transformedContent);
             boolean needsMoreTransformation = linkedTextInRestMatcher.find();
@@ -51,6 +53,14 @@ public final class MarkDownTransformer {
         }
         
         return content;
+    }
+
+    private static String getInitialContent(String content, String linkedText) {
+        return content.substring(0, content.indexOf("[" + linkedText + "]"));
+    }
+
+    private static String buildFootnote(int anchorNumber, String url) {
+        return String.format("[^anchor%s]: %s", anchorNumber, url);
     }
 
 }
