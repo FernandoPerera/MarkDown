@@ -76,6 +76,18 @@ class MarkDownTransformerShould {
         assertEquals(expectedContent, content);
     }
 
+    @Test
+    void transform_content_with_multiple_links() throws IOException {
+        String inputContent = "[This book](https://bestbooks/thisbook) is interesting and amazing, better than [this one](https://bestbooks/thisone)";
+        String expectedContent = "This book [^anchor1] is interesting and amazing, better than this one [^anchor2]\n[^anchor1]: https://bestbooks/thisbook\n[^anchor2]: https://bestbooks/thisone";
+        writeInInputFile(inputContent);
+
+        transformer.execute(inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
+
+        String content = readOutputFile();
+        assertEquals(expectedContent, content);
+    }
+
     private void writeInInputFile(String data) throws IOException {
         writer.write(data);
         writer.flush();
