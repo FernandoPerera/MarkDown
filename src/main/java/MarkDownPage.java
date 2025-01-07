@@ -13,7 +13,7 @@ public final class MarkDownPage {
     }
 
     public void buildFooterMovingLinks() {
-        HashMap<String, String> anchors = findLinksInPage();
+        List<Anchor> anchors = findLinksInPage();
 
         removeBrackets();
         replaceLinksWithAnchors(anchors);
@@ -31,44 +31,44 @@ public final class MarkDownPage {
         }
     }
 
-    private void addLinksToFootNotes(HashMap<String, String> anchors) {
-        List<Map.Entry<String, String>> list = new ArrayList<>(anchors.entrySet());
-        Collections.reverse(list);
-
+    private void addLinksToFootNotes(List<Anchor> anchors) {
         StringBuilder contentWithFootNotes = new StringBuilder(content);
-        for (Map.Entry<String, String> entry : list) {
-            contentWithFootNotes.append(String.format("\n%s: %s", entry.getKey(), entry.getValue()));
-        }
+        String lineBreak = "\n";
+
+        anchors.reversed().forEach((anchor) -> {
+            contentWithFootNotes.append(String.format("%s%s: %s", lineBreak, anchor.get(), anchor.getLink()));
+        });
+
         this.content = contentWithFootNotes.toString();
     }
 
 
-    private void replaceLinksWithAnchors(HashMap<String, String> anchors) {
-        anchors.forEach((anchor, url) -> {
-            String linkWithParenthesis = String.format("\\(%s\\)", url);
-            String anchorText = String.format(" %s", anchor);
+    private void replaceLinksWithAnchors(List<Anchor> anchors) {
+        Collections.reverse(anchors);
+
+        anchors.forEach((anchor) -> {
+            String linkWithParenthesis = String.format("\\(%s\\)", anchor.getLink());
+            String anchorText = String.format(" %s", anchor.get());
             content = content.replaceAll(linkWithParenthesis, anchorText);
         });
     }
 
-    private HashMap<String, String> findLinksInPage() {
-        HashMap<String, String> anchors = new HashMap<>();
+    private List<Anchor> findLinksInPage() {
+        List<Anchor> anchors = new ArrayList<>();
         int anchorIndex = 0;
 
         Matcher matcher = Pattern.compile(LINKED_TEXT_REGEX).matcher(content);
 
         while (matcher.find()) {
             String url = matcher.group(2);
-            boolean urlAppearMultipleTimes = anchors.containsValue(url);
+            boolean urlAppearMultipleTimes = anchors.stream().anyMatch(anchor -> anchor.matches(url));
             if (urlAppearMultipleTimes) {
                 continue;
             }
 
             anchorIndex++;
-            anchors.put(
-                    String.format("[^anchor%s]", anchorIndex),
-                    url
-            );
+            Anchor anchor = Anchor.of(url, String.format("[^anchor%s]", anchorIndex));
+            anchors.add(anchor);
         }
         return anchors;
     }
