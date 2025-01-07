@@ -2,12 +2,12 @@ import java.io.*;
 
 public final class FileManager {
 
-    public boolean exists(File file) throws FileNotFoundException {
+    public boolean exists(File file) {
         return file.exists();
     }
 
     public String read(File file) {
-        String content = "";
+        String content;
 
         try (FileReader reader = new FileReader(file)) {
             StringBuilder stringBuilder = new StringBuilder();
