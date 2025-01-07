@@ -2,10 +2,8 @@ import java.io.*;
 
 public final class FileManager {
 
-    public void verifyExistence(File file) throws FileNotFoundException {
-        if (!file.exists()) {
-            throw new FileNotFoundException("File does not exist: " + file.getAbsolutePath());
-        }
+    public boolean exists(File file) throws FileNotFoundException {
+        return file.exists();
     }
 
     public String read(File file) {

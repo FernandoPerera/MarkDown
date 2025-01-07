@@ -17,13 +17,21 @@ public final class MarkDownTransformer {
         File inputFile = new File(inputFilePath);
         File outputFile = new File(outputFilePath);
 
-        fileManager.verifyExistence(inputFile);
-        fileManager.verifyExistence(outputFile);
+        checkForFiles(inputFile, outputFile);
 
         String inputFileContent = fileManager.read(inputFile);
         String transformedContent = transformContentWithAnchor(inputFileContent, 1);
 
         fileManager.writeContent(transformedContent, outputFile);
+    }
+
+    private void checkForFiles(File inputFile, File outputFile) throws FileNotFoundException {
+        if (!fileManager.exists(inputFile)) {
+            throw new FileNotFoundException("File not found: " + inputFile.getAbsolutePath());
+        }
+        if (!fileManager.exists(outputFile)) {
+            throw new FileNotFoundException("File not found: " + outputFile.getAbsolutePath());
+        }
     }
 
     private String transformContentWithAnchor(String content, int anchorNumber) {
