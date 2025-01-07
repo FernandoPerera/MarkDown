@@ -45,9 +45,9 @@ public final class MarkDownPage {
 
     private void replaceLinksWithAnchors(HashMap<String, String> anchors) {
         anchors.forEach((anchor, url) -> {
-            String linkWithParenthesis = String.format("(%s)", url);
+            String linkWithParenthesis = String.format("\\(%s\\)", url);
             String anchorText = String.format(" %s", anchor);
-            content = content.replace(linkWithParenthesis, anchorText);
+            content = content.replaceAll(linkWithParenthesis, anchorText);
         });
     }
 
@@ -58,14 +58,18 @@ public final class MarkDownPage {
         Matcher matcher = Pattern.compile(LINKED_TEXT_REGEX).matcher(content);
 
         while (matcher.find()) {
-            anchorIndex++;
             String url = matcher.group(2);
+            boolean urlAppearMultipleTimes = anchors.containsValue(url);
+            if (urlAppearMultipleTimes) {
+                continue;
+            }
+
+            anchorIndex++;
             anchors.put(
                     String.format("[^anchor%s]", anchorIndex),
                     url
             );
         }
-
         return anchors;
     }
 
