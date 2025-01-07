@@ -19,7 +19,7 @@ public final class Anchor {
         return this.link;
     }
 
-    public String get() {
+    public String getText() {
         return this.text;
     }
 }

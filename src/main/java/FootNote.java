@@ -2,7 +2,15 @@ import java.util.List;
 
 public final class FootNote {
 
-    private String content = "";
+    private String content;
+
+    private FootNote(String footNote) {
+        this.content = footNote;
+    }
+
+    public static FootNote empty() {
+        return new FootNote("");
+    }
 
     public String getContent() {
         return this.content;
@@ -13,12 +21,12 @@ public final class FootNote {
 
         anchors.reversed().forEach((anchor) ->
                 addFootnote(
-                        String.format("%s%s: %s", lineBreak, anchor.get(), anchor.getLink())
+                        String.format("%s%s: %s", lineBreak, anchor.getText(), anchor.getLink())
                 )
         );
     }
 
     private void addFootnote(String footNote) {
-        this.content = content + footNote;
+        content = content + footNote;
     }
 }
