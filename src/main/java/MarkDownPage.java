@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 public final class MarkDownPage {
 
     private String content;
+    private final FootNote footNote = new FootNote();
 
     private final static String LINKED_TEXT_REGEX = "\\[([^]]+)]\\(([^)]+)\\)";
 
@@ -18,7 +19,7 @@ public final class MarkDownPage {
         removeBrackets();
         replaceLinksWithAnchors(anchors);
 
-        addLinksToFootNotes(anchors);
+        footNote.addLinks(anchors);
     }
 
     private void removeBrackets() {
@@ -30,18 +31,6 @@ public final class MarkDownPage {
             content = content.replace(linkedTextWithBrackets, linkedText);
         }
     }
-
-    private void addLinksToFootNotes(List<Anchor> anchors) {
-        StringBuilder contentWithFootNotes = new StringBuilder(content);
-        String lineBreak = "\n";
-
-        anchors.reversed().forEach((anchor) -> {
-            contentWithFootNotes.append(String.format("%s%s: %s", lineBreak, anchor.get(), anchor.getLink()));
-        });
-
-        this.content = contentWithFootNotes.toString();
-    }
-
 
     private void replaceLinksWithAnchors(List<Anchor> anchors) {
         Collections.reverse(anchors);
@@ -74,6 +63,6 @@ public final class MarkDownPage {
     }
 
     public String getContent() {
-        return this.content;
+        return this.content + footNote.getContent();
     }
 }
