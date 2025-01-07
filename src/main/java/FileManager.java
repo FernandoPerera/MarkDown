@@ -4,7 +4,7 @@ public final class FileManager {
 
     public void verifyExistence(File file) throws FileNotFoundException {
         if (!file.exists()) {
-            throw new FileNotFoundException();
+            throw new FileNotFoundException("File does not exist: " + file.getAbsolutePath());
         }
     }
 
