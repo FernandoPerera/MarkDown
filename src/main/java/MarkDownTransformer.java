@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.FileNotFoundException;
 
 public final class MarkDownTransformer {
@@ -10,25 +9,22 @@ public final class MarkDownTransformer {
     }
 
     public void execute(String inputFilePath, String outputFilePath) throws FileNotFoundException {
-        File inputFile = new File(inputFilePath);
-        File outputFile = new File(outputFilePath);
+        checkForFiles(inputFilePath, outputFilePath);
 
-        checkForFiles(inputFile, outputFile);
-
-        String inputFileContent = fileManager.read(inputFile);
+        String inputFileContent = fileManager.read(inputFilePath);
 
         MarkDownPage page = new MarkDownPage(inputFileContent);
         page.buildFooterMovingLinks();
 
-        fileManager.writeContent(page.getContent(), outputFile);
+        fileManager.writeContent(page.getPage(), outputFilePath);
     }
 
-    private void checkForFiles(File inputFile, File outputFile) throws FileNotFoundException {
-        if (!fileManager.exists(inputFile)) {
-            throw new FileNotFoundException("File not found: " + inputFile.getAbsolutePath());
+    private void checkForFiles(String inputFilePath, String outputFilePath) throws FileNotFoundException {
+        if (fileManager.notExists(inputFilePath)) {
+            throw new FileNotFoundException("File not found: " + inputFilePath);
         }
-        if (!fileManager.exists(outputFile)) {
-            throw new FileNotFoundException("File not found: " + outputFile.getAbsolutePath());
+        if (fileManager.notExists(outputFilePath)) {
+            throw new FileNotFoundException("File not found: " + outputFilePath);
         }
     }
 

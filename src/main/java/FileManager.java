@@ -2,14 +2,14 @@ import java.io.*;
 
 public final class FileManager {
 
-    public boolean exists(File file) {
-        return file.exists();
+    public boolean notExists(String filePath) {
+        return !new File(filePath).exists();
     }
 
-    public String read(File file) {
+    public String read(String filePath) {
         String content;
 
-        try (FileReader reader = new FileReader(file)) {
+        try (FileReader reader = new FileReader(filePath)) {
             StringBuilder stringBuilder = new StringBuilder();
             int accumulator;
             while ((accumulator = reader.read()) != -1) {
@@ -23,8 +23,8 @@ public final class FileManager {
         return content;
     }
 
-    public void writeContent(String content, File file) {
-        try (FileWriter writer = new FileWriter(file)) {
+    public void writeContent(String content, String filePath) {
+        try (FileWriter writer = new FileWriter(filePath)) {
             writer.write(content);
             writer.flush();
         } catch (IOException e) {
