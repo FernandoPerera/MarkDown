@@ -90,8 +90,8 @@ class MarkDownTransformerShould {
 
     @Test
     void add_only_one_time_link_to_footnotes_if_repeated() throws IOException {
-        String inputContent = "[This book](https://bestbooks/thisbook) is interesting and amazing, better than [this one](https://bestbooks/thisbook)";
-        String expectedContent = "This book [^anchor1] is interesting and amazing, better than this one [^anchor1]\n[^anchor1]: https://bestbooks/thisbook";
+        String inputContent = "[This book](https://bestbooks/thisbook) is interesting and amazing.[This book](https://bestbooks/thisbook) have another versions like [this one](https://bestbooks/thisone)";
+        String expectedContent = "This book [^anchor1] is interesting and amazing.This book [^anchor1] have another versions like this one [^anchor2]\n[^anchor1]: https://bestbooks/thisbook\n[^anchor2]: https://bestbooks/thisone";
         writeInInputFile(inputContent);
 
         transformer.execute(inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
