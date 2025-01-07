@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,17 +25,42 @@ public final class MarkDownTransformer {
     }
 
     private String getTransformedContent(String content) {
+        HashMap<String, String> anchors = new HashMap<>();
+
         Matcher visibleTextMatcher = Pattern.compile("\\[(.*?)]").matcher(content);
         visibleTextMatcher.find();
-        String visibleText = visibleTextMatcher.group(1);
+        String linkedText = visibleTextMatcher.group(1);
 
         Matcher urlMatcher = Pattern.compile("\\((.*?)\\)").matcher(content);
         urlMatcher.find();
-        String urlText = urlMatcher.group(1);
+        String url = urlMatcher.group(1);
 
-        String remainingText = content.substring(content.indexOf(urlText) + urlText.length() + 1);
+        String contentWithoutTransformation = content.substring(content.indexOf(url) + url.length() + 1);
+        String remainingContent = String.format("%s [^anchor1]%s", linkedText, contentWithoutTransformation);
 
-        return String.format("%s [^anchor1]%s\n[^anchor1]: %s", visibleText, remainingText, urlText);
+        anchors.put("[^anchor1]", url);
+
+        Matcher visibleTextMatcher2 = Pattern.compile("\\[(.*?)]").matcher(contentWithoutTransformation);
+        Matcher urlMatcher2 = Pattern.compile("\\((.*?)\\)").matcher(contentWithoutTransformation);
+
+        if (urlMatcher2.find() && visibleTextMatcher2.find()) {
+            String visibleText2 = visibleTextMatcher2.group(1);
+            String urlText2 = urlMatcher2.group(1);
+
+            String contentWithoutSecondTransformation = contentWithoutTransformation.substring(contentWithoutTransformation.indexOf(urlText2) + urlText2.length() + 1);
+            String secondTransformation = String.format("%s [^anchor2]", visibleText2);
+            remainingContent = remainingContent.replace("[" + visibleText2 + "]", String.format("%s%s", secondTransformation, contentWithoutSecondTransformation)).replace("(" + urlText2 + ")", "");;
+
+            anchors.put("[^anchor2]", urlText2);
+        }
+        
+        String finalRemainingContent = remainingContent;
+        StringBuffer finalContent = new StringBuffer(finalRemainingContent);
+        
+        anchors.forEach((key, value) -> {
+            finalContent.insert(finalRemainingContent.length(), String.format("\n%s: %s", key, value));
+        });
+        return finalContent.toString();
     }
 
 }
