@@ -88,6 +88,18 @@ class MarkDownTransformerShould {
         assertEquals(expectedContent, content);
     }
 
+    @Test
+    void add_only_one_time_link_to_footnotes_if_repeated() throws IOException {
+        String inputContent = "[This book](https://bestbooks/thisbook) is interesting and amazing, better than [this one](https://bestbooks/thisbook)";
+        String expectedContent = "This book [^anchor1] is interesting and amazing, better than this one [^anchor1]\n[^anchor1]: https://bestbooks/thisbook";
+        writeInInputFile(inputContent);
+
+        transformer.execute(inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
+
+        String content = readOutputFile();
+        assertEquals(expectedContent, content);
+    }
+
     private void writeInInputFile(String data) throws IOException {
         writer.write(data);
         writer.flush();
