@@ -32,7 +32,9 @@ public final class MarkDownTransformer {
         urlMatcher.find();
         String urlText = urlMatcher.group(1);
 
-        return visibleText + " [^anchor1]\n[^anchor1]: " + urlText;
+        String remainingText = content.substring(content.indexOf(urlText) + urlText.length() + 1);
+
+        return String.format("%s [^anchor1]%s\n[^anchor1]: %s", visibleText, remainingText, urlText);
     }
 
 }
